@@ -3,96 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trần Duy Hiếu | Tech Storage</title>
+    <title>Trần Duy Hiếu | Creative Tech Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:wght@400;900&display=swap" rel="stylesheet">
-    
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
-
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        body { background: #0a0a0a; color: #eee; font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .btn-download {
-            background: linear-gradient(135deg, #00f2ff 0%, #006ae6 100%);
-            transition: all 0.3s ease;
-        }
-        .btn-download:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0,242,255,0.4); }
-        .mono { font-family: 'Fira Code', monospace; }
+        :root { --cyan: #00f2ff; --pink: #ff007a; }
+        body { background: #020205; color: #fff; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .glass { background: rgba(255,255,255,0.02); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
+        .neon-text { text-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan); }
+        .skill-bar { height: 6px; background: #111; border-radius: 10px; overflow: hidden; }
+        .skill-progress { height: 100%; background: linear-gradient(90deg, var(--cyan), #006ae6); }
+        .hero-bg { background: radial-gradient(circle at 50% 50%, #101827 0%, #020205 100%); }
     </style>
 </head>
-<body class="p-4 md:p-10 border-t-4 border-cyan-500">
+<body>
 
-    <header class="max-w-5xl mx-auto mb-12 flex justify-between items-end">
-        <div>
-            <h1 class="text-4xl font-black italic tracking-tighter">DUY HIEU <span class="text-cyan-400">LAB.</span></h1>
-            <p class="text-gray-500 text-xs mt-1 mono uppercase tracking-widest">> C++ / Arduino / PPT Portfolio</p>
+    <nav class="fixed top-0 w-full z-50 glass py-5 px-10 flex justify-between items-center border-b border-white/5">
+        <div class="text-2xl font-black italic tracking-tighter">HIEU<span class="text-cyan-400">.</span></div>
+        <div class="hidden md:flex gap-10 text-[10px] uppercase font-bold tracking-[0.2em]">
+            <a href="#home" class="hover:text-cyan-400">Trang chủ</a>
+            <a href="#skills" class="hover:text-cyan-400">Kỹ năng</a>
+            <a href="#projects" class="hover:text-cyan-400 text-pink-500 underline decoration-2 offset-4">Kho dự án</a>
         </div>
-        <div class="text-right hidden md:block">
-            <span class="text-[10px] text-gray-600 mono">SYSTEM STATUS: ONLINE</span>
+    </nav>
+
+    <section id="home" class="min-h-screen flex flex-col justify-center items-center p-6 hero-bg">
+        <div class="p-2 px-4 glass text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-6 rounded-full">
+            Ready to Build the Future
         </div>
-    </header>
+        <h1 class="text-7xl md:text-9xl font-black tracking-tighter mb-4 neon-text italic">
+            DUY HIẾU
+        </h1>
+        <p class="text-gray-400 mono text-sm md:text-lg max-w-2xl text-center leading-relaxed">
+            Tôi kết hợp logic của <span class="text-white">C++</span>, sức mạnh của <span class="text-white">Arduino</span> 
+            và nghệ thuật trình diễn của <span class="text-white">PowerPoint</span> để tạo ra những sản phẩm khác biệt.
+        </p>
+        <div class="mt-12 flex gap-6">
+            <a href="#projects" class="bg-cyan-500 text-black font-black px-10 py-4 rounded-full hover:scale-110 transition uppercase text-xs">Bắt đầu khám phá</a>
+        </div>
+    </section>
 
-    <main class="max-w-5xl mx-auto">
-        <section class="glass p-6 rounded-2xl mb-16 border border-cyan-500/20 shadow-2xl">
-            <h2 class="text-white font-bold mb-4 flex items-center text-sm uppercase tracking-widest">
-                <span class="w-2 h-2 bg-cyan-500 mr-2 rounded-full animate-pulse"></span> Đăng dự án mới
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" id="pTitle" placeholder="Tên dự án (Ví dụ: Game Bắn Máy Bay)" class="bg-[#111] border border-gray-800 p-3 rounded-lg text-sm outline-none focus:border-cyan-500">
-                <select id="pType" class="bg-[#111] border border-gray-800 p-3 rounded-lg text-sm outline-none focus:border-cyan-500 cursor-pointer">
-                    <option value="code">Lập trình (C++ / Arduino)</option>
-                    <option value="ppt">PowerPoint (Slide)</option>
-                </select>
-                <input type="text" id="pDownload" placeholder="Dán link tải file (Drive, GitHub...)" class="bg-[#111] border border-gray-800 p-3 rounded-lg text-sm outline-none focus:border-cyan-500 md:col-span-2">
-                <textarea id="pContent" placeholder="Dán nội dung bài viết hoặc mã code vào đây..." class="bg-[#111] border border-gray-800 p-3 rounded-lg text-sm outline-none focus:border-cyan-500 md:col-span-2 h-32 mono"></textarea>
-                <button onclick="addProject()" class="md:col-span-2 btn-download text-white font-bold p-4 rounded-xl uppercase tracking-widest text-sm">Xuất bản lên Web</button>
+    <section id="skills" class="max-w-5xl mx-auto py-24 px-6">
+        <h2 class="text-4xl font-black mb-16 italic">KỸ NĂNG <span class="text-cyan-400">CHUYÊN MÔN</span></h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+                <div class="mb-6">
+                    <div class="flex justify-between mb-2 font-bold text-xs uppercase"><span>C++ / SFML Game Dev</span> <span>90%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 90%"></div></div>
+                </div>
+                <div class="mb-6">
+                    <div class="flex justify-between mb-2 font-bold text-xs uppercase"><span>Arduino & IoT</span> <span>85%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 85%"></div></div>
+                </div>
             </div>
-        </section>
+            <div>
+                <div class="mb-6">
+                    <div class="flex justify-between mb-2 font-bold text-xs uppercase"><span>PowerPoint Design</span> <span>95%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 95%; background: var(--pink)"></div></div>
+                </div>
+                <div class="mb-6">
+                    <div class="flex justify-between mb-2 font-bold text-xs uppercase"><span>UI/UX Graphics</span> <span>80%</span></div>
+                    <div class="skill-bar"><div class="skill-progress" style="width: 80%; background: var(--pink)"></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        <div id="project-list" class="grid grid-cols-1 gap-8">
+    <section id="projects" class="max-w-6xl mx-auto py-24 px-6">
+        <div class="flex items-center gap-4 mb-16">
+            <div class="h-[2px] w-20 bg-cyan-500"></div>
+            <h2 class="text-4xl font-black italic">DỰ ÁN <span class="text-cyan-400">NỔI BẬT</span></h2>
+        </div>
+        <div id="project-list" class="grid grid-cols-1 md:grid-cols-2 gap-10">
             </div>
-    </main>
+    </section>
+
+    <footer class="py-20 text-center border-t border-white/5 opacity-30 text-[10px] tracking-widest font-bold">
+        TRẦN DUY HIẾU © 2025 • POWERED BY FIREBASE & GITHUB
+    </footer>
 
     <script>
-        function addProject() {
-            const title = document.getElementById('pTitle').value;
-            const type = document.getElementById('pType').value;
-            const download = document.getElementById('pDownload').value;
-            const content = document.getElementById('pContent').value;
+        // Hiếu hãy thay link Firebase của bạn vào đây
+        const firebaseConfig = { databaseURL: "https://YOUR-PROJECT-ID.firebaseio.com" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        db.ref('projects').on('value', (snapshot) => {
             const list = document.getElementById('project-list');
-
-            if(!title || !content) return alert("Nhập đủ thông tin Hiếu ơi!");
-
-            const card = document.createElement('div');
-            card.className = "glass p-6 rounded-2xl border-l-4 " + (type === 'code' ? 'border-cyan-500' : 'border-pink-500');
-
-            let htmlBody = `
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <span class="text-[10px] mono text-gray-500 uppercase">${type} PROJECT</span>
-                        <h3 class="text-2xl font-bold text-white">${title}</h3>
+            list.innerHTML = '';
+            snapshot.forEach((child) => {
+                const data = child.val();
+                const card = document.createElement('div');
+                card.className = "glass p-10 rounded-[40px] border-t-2 " + (data.type === 'code' ? 'border-cyan-500' : 'border-pink-500 hover:shadow-[0_0_30px_rgba(255,0,122,0.1)] transition-all');
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-6">
+                        <h3 class="text-2xl font-black uppercase tracking-tighter italic leading-none">${data.title}</h3>
+                        ${data.download ? `<a href="${data.download}" target="_blank" class="bg-white text-black text-[9px] font-black px-4 py-2 rounded-full hover:bg-cyan-400 transition">DOWNLOAD</a>` : ''}
                     </div>
-                    ${download ? `<a href="${download}" target="_blank" class="btn-download px-6 py-2 rounded-full text-xs font-bold text-white shadow-lg flex items-center">📥 TẢI FILE</a>` : ''}
-                </div>
-            `;
-
-            if(type === 'code') {
-                htmlBody += `<div class="rounded-lg overflow-hidden border border-gray-800"><pre class="!m-0"><code class="language-cpp">${content.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre></div>`;
-            } else {
-                htmlBody += `<p class="text-gray-400 text-sm leading-relaxed">${content}</p>`;
-            }
-
-            card.innerHTML = htmlBody;
-            list.prepend(card);
-
-            // Reset & Re-highlight
-            Prism.highlightAll();
-            document.getElementById('pTitle').value = '';
-            document.getElementById('pDownload').value = '';
-            document.getElementById('pContent').value = '';
-        }
+                    ${data.type === 'code' ? `<div class="rounded-2xl overflow-hidden text-[11px] border border-white/5 shadow-2xl"><pre class="!m-0 p-4"><code>${data.content.replace(/</g, "&lt;")}</code></pre></div>` : `<p class="text-gray-400 text-sm leading-relaxed">${data.content}</p>`}
+                `;
+                list.prepend(card);
+            });
+        });
     </script>
 </body>
 </html>
