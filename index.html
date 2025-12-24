@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trần Duy Hiếu | Tech Storage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+
+    <style>
+        body { background: #0a0a0a; color: #eee; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .btn-download {
+            background: linear-gradient(135deg, #00f2ff 0%, #006ae6 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-download:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0,242,255,0.4); }
+        .mono { font-family: 'Fira Code', monospace; }
+    </style>
+</head>
+<body class="p-4 md:p-10 border-t-4 border-cyan-500">
+
+    <header class="max-w-5xl mx-auto mb-12 flex justify-between items-end">
+        <div>
+            <h1 class="text-4xl font-black italic tracking-tighter">DUY HIEU <span class="text-cyan-400">LAB.</span></h1>
+            <p class="text-gray-500 text-xs mt-1 mono uppercase tracking-widest">> C++ / Arduino / PPT Portfolio</p>
+        </div>
+        <div class="text-right hidden md:block">
+            <span class="text-[10px] text-gray-600 mono">SYSTEM STATUS: ONLINE</span>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto">
+        <section class="glass p-6 rounded-2xl mb-16 border border-cyan-500/20 shadow-2xl">
+            <h2 class="text-white font-bold mb-4 flex items-center text-sm uppercase tracking-widest">
+                <span class="w-2 h-2 bg-cyan-500 mr-2 rounded-full animate-pulse"></span> Đăng dự án mới
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="text" id="pTitle" placeholder="Tên dự án (Ví dụ: Game Bắn Máy Bay)" class="bg-[#111] border border-gray-800 p-3 rounded-lg text-sm outline-none focus:border-cyan-500">
+                <select id="pType" class="bg-[#111] border border-gray-800 p-3 rounded-lg text-sm outline-none focus:border-cyan-500 cursor-pointer">
+                    <option value="code">Lập trình (C++ / Arduino)</option>
+                    <option value="ppt">PowerPoint (Slide)</option>
+                </select>
+                <input type="text" id="pDownload" placeholder="Dán link tải file (Drive, GitHub...)" class="bg-[#111] border border-gray-800 p-3 rounded-lg text-sm outline-none focus:border-cyan-500 md:col-span-2">
+                <textarea id="pContent" placeholder="Dán nội dung bài viết hoặc mã code vào đây..." class="bg-[#111] border border-gray-800 p-3 rounded-lg text-sm outline-none focus:border-cyan-500 md:col-span-2 h-32 mono"></textarea>
+                <button onclick="addProject()" class="md:col-span-2 btn-download text-white font-bold p-4 rounded-xl uppercase tracking-widest text-sm">Xuất bản lên Web</button>
+            </div>
+        </section>
+
+        <div id="project-list" class="grid grid-cols-1 gap-8">
+            </div>
+    </main>
+
+    <script>
+        function addProject() {
+            const title = document.getElementById('pTitle').value;
+            const type = document.getElementById('pType').value;
+            const download = document.getElementById('pDownload').value;
+            const content = document.getElementById('pContent').value;
+            const list = document.getElementById('project-list');
+
+            if(!title || !content) return alert("Nhập đủ thông tin Hiếu ơi!");
+
+            const card = document.createElement('div');
+            card.className = "glass p-6 rounded-2xl border-l-4 " + (type === 'code' ? 'border-cyan-500' : 'border-pink-500');
+
+            let htmlBody = `
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <span class="text-[10px] mono text-gray-500 uppercase">${type} PROJECT</span>
+                        <h3 class="text-2xl font-bold text-white">${title}</h3>
+                    </div>
+                    ${download ? `<a href="${download}" target="_blank" class="btn-download px-6 py-2 rounded-full text-xs font-bold text-white shadow-lg flex items-center">📥 TẢI FILE</a>` : ''}
+                </div>
+            `;
+
+            if(type === 'code') {
+                htmlBody += `<div class="rounded-lg overflow-hidden border border-gray-800"><pre class="!m-0"><code class="language-cpp">${content.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre></div>`;
+            } else {
+                htmlBody += `<p class="text-gray-400 text-sm leading-relaxed">${content}</p>`;
+            }
+
+            card.innerHTML = htmlBody;
+            list.prepend(card);
+
+            // Reset & Re-highlight
+            Prism.highlightAll();
+            document.getElementById('pTitle').value = '';
+            document.getElementById('pDownload').value = '';
+            document.getElementById('pContent').value = '';
+        }
+    </script>
+</body>
+</html>
