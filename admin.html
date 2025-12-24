@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hiếu Admin | Quản trị dự án</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+</head>
+<body class="bg-gray-900 text-white p-10 font-sans">
+    <h1 class="text-3xl font-bold mb-10 border-b pb-4">Quản lý nội dung - Duy Hiếu</h1>
+
+    <div class="bg-gray-800 p-8 rounded-2xl mb-10 shadow-xl border border-gray-700">
+        <h2 class="text-blue-400 font-bold mb-4">Đăng dự án mới</h2>
+        <div class="grid gap-4">
+            <input type="text" id="pTitle" placeholder="Tiêu đề" class="bg-gray-900 p-3 rounded border border-gray-700">
+            <select id="pType" class="bg-gray-900 p-3 rounded border border-gray-700">
+                <option value="code">Code C++ / Arduino</option>
+                <option value="ppt">PowerPoint</option>
+            </select>
+            <input type="text" id="pDownload" placeholder="Link tải file (Drive)" class="bg-gray-900 p-3 rounded border border-gray-700">
+            <textarea id="pContent" placeholder="Nội dung" class="bg-gray-900 p-3 rounded border border-gray-700 h-32"></textarea>
+            <button onclick="save()" class="bg-blue-600 hover:bg-blue-500 p-4 rounded font-bold uppercase">Xuất bản bài viết</button>
+        </div>
+    </div>
+
+    <h2 class="text-red-400 font-bold mb-4">Danh sách dự án (Nhấn X để xóa)</h2>
+    <div id="admin-list" class="space-y-4"></div>
+
+    <script>
+        const firebaseConfig = { databaseURL: "https://YOUR-PROJECT-ID.firebaseio.com" }; // Dán link Firebase của bạn vào
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function save() {
+            const title = document.getElementById('pTitle').value;
+            const type = document.getElementById('pType').value;
+            const download = document.getElementById('pDownload').value;
+            const content = document.getElementById('pContent').value;
+            if(!title || !content) return alert("Điền đủ thông tin!");
+            db.ref('projects').push({ title, type, download, content });
+            alert("Đã đăng!");
+            location.reload();
+        }
+
+        db.ref('projects').on('value', (snapshot) => {
+            const list = document.getElementById('admin-list');
+            list.innerHTML = '';
+            snapshot.forEach((child) => {
+                const data = child.val();
+                const id = child.key;
+                list.innerHTML += `
+                    <div class="bg-gray-800 p-4 rounded flex justify-between items-center border border-gray-700">
+                        <span>${data.title} (${data.type})</span>
+                        <button onclick="deletePost('${id}')" class="bg-red-600 px-4 py-1 rounded text-xs">XÓA BÀI</button>
+                    </div>
+                `;
+            });
+        });
+
+        function deletePost(id) {
+            if(confirm("Hiếu có chắc muốn xóa dự án này không?")) {
+                db.ref('projects/' + id).remove();
+            }
+        }
+    </script>
+</body>
+</html>
