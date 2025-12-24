@@ -3,112 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trần Duy Hiếu | Creative Tech Portfolio</title>
+    <title>Trần Duy Hiếu | Lab</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
     <style>
-        :root { --cyan: #00f2ff; --pink: #ff007a; }
-        body { background: #020205; color: #fff; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
-        .glass { background: rgba(255,255,255,0.02); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
-        .neon-text { text-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan); }
-        .skill-bar { height: 6px; background: #111; border-radius: 10px; overflow: hidden; }
-        .skill-progress { height: 100%; background: linear-gradient(90deg, var(--cyan), #006ae6); }
-        .hero-bg { background: radial-gradient(circle at 50% 50%, #101827 0%, #020205 100%); }
+        body { background: #050505; color: white; font-family: 'Inter', sans-serif; }
+        .hero-title { font-size: clamp(3rem, 10vw, 8rem); font-weight: 900; line-height: 0.9; }
+        .project-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; transition: 0.3s; }
+        .project-card:hover { border-color: #00f2ff; background: rgba(0,242,255,0.02); }
     </style>
 </head>
 <body>
 
-    <nav class="fixed top-0 w-full z-50 glass py-5 px-10 flex justify-between items-center border-b border-white/5">
-        <div class="text-2xl font-black italic tracking-tighter">HIEU<span class="text-cyan-400">.</span></div>
-        <div class="hidden md:flex gap-10 text-[10px] uppercase font-bold tracking-[0.2em]">
-            <a href="#home" class="hover:text-cyan-400">Trang chủ</a>
-            <a href="#skills" class="hover:text-cyan-400">Kỹ năng</a>
-            <a href="#projects" class="hover:text-cyan-400 text-pink-500 underline decoration-2 offset-4">Kho dự án</a>
-        </div>
-    </nav>
-
-    <section id="home" class="min-h-screen flex flex-col justify-center items-center p-6 hero-bg">
-        <div class="p-2 px-4 glass text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-6 rounded-full">
-            Ready to Build the Future
-        </div>
-        <h1 class="text-7xl md:text-9xl font-black tracking-tighter mb-4 neon-text italic">
-            DUY HIẾU
-        </h1>
-        <p class="text-gray-400 mono text-sm md:text-lg max-w-2xl text-center leading-relaxed">
-            Tôi kết hợp logic của <span class="text-white">C++</span>, sức mạnh của <span class="text-white">Arduino</span> 
-            và nghệ thuật trình diễn của <span class="text-white">PowerPoint</span> để tạo ra những sản phẩm khác biệt.
-        </p>
-        <div class="mt-12 flex gap-6">
-            <a href="#projects" class="bg-cyan-500 text-black font-black px-10 py-4 rounded-full hover:scale-110 transition uppercase text-xs">Bắt đầu khám phá</a>
+    <section class="min-h-screen flex flex-col justify-center px-6 md:px-20">
+        <p class="text-cyan-400 font-bold tracking-[0.3em] mb-4 uppercase text-sm">Portfolio / 2025</p>
+        <h1 class="hero-title italic tracking-tighter mb-8">TRẦN DUY<br><span class="text-cyan-400">HIẾU.</span></h1>
+        <div class="flex gap-6">
+            <a href="#projects" class="bg-white text-black font-black px-8 py-4 rounded-full text-xs uppercase hover:bg-cyan-400 transition">Khám phá ngay</a>
         </div>
     </section>
 
-    <section id="skills" class="max-w-5xl mx-auto py-24 px-6">
-        <h2 class="text-4xl font-black mb-16 italic">KỸ NĂNG <span class="text-cyan-400">CHUYÊN MÔN</span></h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div>
-                <div class="mb-6">
-                    <div class="flex justify-between mb-2 font-bold text-xs uppercase"><span>C++ / SFML Game Dev</span> <span>90%</span></div>
-                    <div class="skill-bar"><div class="skill-progress" style="width: 90%"></div></div>
-                </div>
-                <div class="mb-6">
-                    <div class="flex justify-between mb-2 font-bold text-xs uppercase"><span>Arduino & IoT</span> <span>85%</span></div>
-                    <div class="skill-bar"><div class="skill-progress" style="width: 85%"></div></div>
-                </div>
-            </div>
-            <div>
-                <div class="mb-6">
-                    <div class="flex justify-between mb-2 font-bold text-xs uppercase"><span>PowerPoint Design</span> <span>95%</span></div>
-                    <div class="skill-bar"><div class="skill-progress" style="width: 95%; background: var(--pink)"></div></div>
-                </div>
-                <div class="mb-6">
-                    <div class="flex justify-between mb-2 font-bold text-xs uppercase"><span>UI/UX Graphics</span> <span>80%</span></div>
-                    <div class="skill-bar"><div class="skill-progress" style="width: 80%; background: var(--pink)"></div></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="projects" class="max-w-6xl mx-auto py-24 px-6">
-        <div class="flex items-center gap-4 mb-16">
-            <div class="h-[2px] w-20 bg-cyan-500"></div>
-            <h2 class="text-4xl font-black italic">DỰ ÁN <span class="text-cyan-400">NỔI BẬT</span></h2>
-        </div>
-        <div id="project-list" class="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <section id="projects" class="max-w-6xl mx-auto py-32 px-6">
+        <h2 class="text-3xl font-black mb-12 uppercase italic border-l-4 border-cyan-400 pl-4">Kho dự án công khai</h2>
+        <div id="project-list" class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
             </div>
     </section>
-
-    <footer class="py-20 text-center border-t border-white/5 opacity-30 text-[10px] tracking-widest font-bold">
-        TRẦN DUY HIẾU © 2025 • POWERED BY FIREBASE & GITHUB
-    </footer>
 
     <script>
-        // Hiếu hãy thay link Firebase của bạn vào đây
-        const firebaseConfig = { databaseURL: "https://console.firebase.google.com/project/my-portfolio-690a9/database/my-portfolio-690a9-default-rtdb/data/~2F" };
+        // --- CHỖ QUAN TRỌNG NHẤT: Dán link Firebase của Hiếu vào đây ---
+        const firebaseConfig = { 
+            databaseURL: "https://my-portfolio-690a9-default-rtdb.firebaseio.com/" 
+        };
+        // -------------------------------------------------------------
+
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // Lệnh "Hút" dữ liệu từ Firebase ra màn hình
         db.ref('projects').on('value', (snapshot) => {
             const list = document.getElementById('project-list');
-            list.innerHTML = '';
+            list.innerHTML = ''; // Xóa sạch để tải mới
+            
+            if(!snapshot.exists()) {
+                list.innerHTML = "<p class='text-gray-600'>Đang đợi Hiếu đăng bài đầu tiên...</p>";
+                return;
+            }
+
             snapshot.forEach((child) => {
                 const data = child.val();
                 const card = document.createElement('div');
-                card.className = "glass p-10 rounded-[40px] border-t-2 " + (data.type === 'code' ? 'border-cyan-500' : 'border-pink-500 hover:shadow-[0_0_30px_rgba(255,0,122,0.1)] transition-all');
-                
+                card.className = "project-card p-8";
                 card.innerHTML = `
-                    <div class="flex justify-between items-start mb-6">
-                        <h3 class="text-2xl font-black uppercase tracking-tighter italic leading-none">${data.title}</h3>
-                        ${data.download ? `<a href="${data.download}" target="_blank" class="bg-white text-black text-[9px] font-black px-4 py-2 rounded-full hover:bg-cyan-400 transition">DOWNLOAD</a>` : ''}
+                    <div class="flex justify-between mb-6">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">${data.type}</span>
+                        ${data.download ? `<a href="${data.download}" target="_blank" class="text-cyan-400 font-bold text-xs underline">DOWNLOAD</a>` : ''}
                     </div>
-                    ${data.type === 'code' ? `<div class="rounded-2xl overflow-hidden text-[11px] border border-white/5 shadow-2xl"><pre class="!m-0 p-4"><code>${data.content.replace(/</g, "&lt;")}</code></pre></div>` : `<p class="text-gray-400 text-sm leading-relaxed">${data.content}</p>`}
+                    <h3 class="text-2xl font-black mb-4 uppercase">${data.title}</h3>
+                    <div class="bg-black/50 p-4 rounded-xl">
+                        ${data.type === 'code' ? `<pre class="text-xs text-green-400 overflow-x-auto"><code>${data.content.replace(/</g, "&lt;")}</code></pre>` : `<p class="text-gray-400 text-sm">${data.content}</p>`}
+                    </div>
                 `;
-                list.prepend(card);
+                list.prepend(card); // Bài mới hiện lên đầu
             });
         });
     </script>
 </body>
 </html>
-
