@@ -1,1 +1,412 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRẦN DUY HIẾU | Hệ Thống Portfolio</title>
+    
+    <link rel="icon" href="" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
+    <style>
+        :root { --accent: #00f2ff; --bg: #010101; }
+        * { cursor: none !important; }
+        body { background: var(--bg); color: #fff; font-family: 'Be Vietnam Pro', sans-serif; overflow-x: hidden; }
+        .code-font { font-family: 'JetBrains Mono', monospace; }
+
+        /* Custom Cursor */
+        #cursor-dot { width: 6px; height: 6px; background: #fff; position: fixed; pointer-events: none; z-index: 10000; border-radius: 50%; }
+        #cursor-outline { width: 35px; height: 35px; border: 1.5px solid var(--accent); position: fixed; pointer-events: none; z-index: 9999; border-radius: 50%; transition: 0.1s ease-out; box-shadow: 0 0 15px var(--accent); }
+
+        /* Chữ HIẾU rực rỡ */
+        .special-hieu {
+            font-size: clamp(5rem, 22vw, 15rem);
+            font-weight: 900;
+            background: linear-gradient(90deg, #00f2ff, #7000ff, #ff0050);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 30px rgba(0, 242, 255, 0.4));
+            line-height: 0.8;
+        }
+
+        /* Bento Cards */
+        .glass-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 2rem; transition: 0.4s cubic-bezier(0.2, 1, 0.3, 1); }
+        .glass-card:hover { border-color: var(--accent); background: rgba(255, 255, 255, 0.05); transform: translateY(-10px); }
+
+        /* Matrix Canvas */
+        #matrix { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
+
+        /* Admin Terminal */
+        #admin-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 9999; backdrop-filter: blur(25px); overflow-y: auto; padding: 40px 20px; }
+        .input-terminal { background: #0a0a0a; border: 1px solid #222; padding: 15px; border-radius: 12px; width: 100%; color: white; outline: none; margin-bottom: 12px; font-family: 'JetBrains Mono'; }
+        .input-terminal:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2); }
+        /* Nút nhấn mục */
+        .filter-btn {
+            padding: 8px 20px;
+            border: 1px solid rgba(0, 242, 255, 0.1);
+            border-radius: 99px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            color: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .filter-btn:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+            background: rgba(0, 242, 255, 0.05);
+        }
+
+        .active-filter {
+            background: var(--accent) !important;
+            color: #000 !important;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix"></canvas>
+    <div id="cursor-dot"></div>
+    <div id="cursor-outline"></div>
+
+    <nav class="p-8 md:p-12 flex justify-between items-center relative z-50">
+        <div class="code-font font-black text-2xl tracking-tighter">HIEU<span class="text-cyan-400">.</span>CODE</div>
+        <div class="flex items-center gap-6">
+            <button onclick="toggleAdmin(true)" class="code-font text-[10px] bg-white/5 px-4 py-2 rounded-full border border-white/10 hover:border-cyan-400 transition tracking-widest uppercase">System Login</button>
+        </div>
+    </nav>
+
+    <main class="min-h-[80vh] flex flex-col justify-center px-8 md:px-24">
+        <div class="mb-6">
+            <span class="code-font text-cyan-400 text-xs tracking-[0.5em] uppercase">Algorithm Specialist</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl opacity-20 uppercase tracking-[0.6em] ml-2">Trần Duy</h2>
+        <h1 class="special-hieu">HIẾU<span class="text-white">.</span></h1>
+
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mt-16 max-w-6xl">
+            <a href="https://www.tiktok.com/@tranhieu4940979631274" target="_blank" class="glass-card col-span-2 p-8 flex items-center justify-center gap-4 bg-gradient-to-r from-[#ff0050] to-[#00f2ff] border-none group">
+                <i class="fa-brands fa-tiktok text-3xl"></i>
+                <span class="font-black uppercase tracking-widest">Kênh TikTok</span>
+            </a>
+            <a href="https://www.facebook.com/hieu.tranduy.313/" target="_blank" class="glass-card p-6 flex flex-col items-center justify-center gap-2 hover:text-blue-500">
+                <i class="fa-brands fa-facebook text-2xl"></i>
+                <span class="text-[9px] font-bold uppercase tracking-widest">Facebook</span>
+            </a>
+            <a href="https://github.com/DuyHieu123" target="_blank" class="glass-card p-6 flex flex-col items-center justify-center gap-2 hover:text-gray-400">
+                <i class="fa-brands fa-github text-2xl"></i>
+                <span class="text-[9px] font-bold uppercase tracking-widest">GitHub</span>
+            </a>
+            <a href="https://zalo.me/0329658984" target="_blank" class="glass-card p-6 flex flex-col items-center justify-center gap-2 hover:text-cyan-400">
+                <i class="fa-solid fa-comment text-2xl"></i>
+                <span class="text-[9px] font-bold uppercase tracking-widest">Zalo</span>
+            </a>
+        </div>
+    </main>
+    <section class="max-w-7xl mx-auto px-8 py-32 grid grid-cols-1 md:grid-cols-2 gap-20">
+        <div class="relative">
+            <h3 class="code-font text-cyan-400 text-xs tracking-[0.5em] uppercase mb-8 italic">// 01. Background</h3>
+            <p class="text-2xl font-light leading-relaxed text-gray-300">
+                Tôi là một lập trình viên đam mê <span class="text-white font-bold italic">Giải thuật & Cấu trúc dữ liệu</span>. 
+                Với nền tảng từ đội tuyển <span class="text-cyan-400 font-bold">HSG Tin học</span> suốt 4 năm, tôi không chỉ viết code, 
+                tôi giải quyết vấn đề bằng tư duy tối ưu hóa.
+            </p>
+            <div class="mt-10 p-8 glass-card border-l-4 border-cyan-400 bg-cyan-400/5">
+                <p class="text-sm text-gray-400 italic">
+                    "Lập trình không phải là gõ phím, đó là nghệ thuật của tư duy logic."
+                </p>
+            </div>
+        </div>
+
+        <div class="glass-card p-10">
+            <h3 class="code-font text-cyan-400 text-xs tracking-[0.5em] uppercase mb-10 italic">// 02. Skills_Stack</h3>
+            <div class="grid grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <h4 class="text-xs font-bold text-gray-500 uppercase">Core</h4>
+                    <ul class="space-y-2 code-font text-sm">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[10px] text-cyan-400"></i> C++ / STL</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[10px] text-cyan-400"></i> Algorithms</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[10px] text-cyan-400"></i> Data Structures</li>
+                    </ul>
+                </div>
+                <div class="space-y-4">
+                    <h4 class="text-xs font-bold text-gray-500 uppercase">Frontend</h4>
+                    <ul class="space-y-2 code-font text-sm">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[10px] text-cyan-400"></i> HTML5 / CSS3</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[10px] text-cyan-400"></i> Tailwind CSS</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-[10px] text-cyan-400"></i> Firebase</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-10 space-y-4">
+                <div class="w-full bg-white/5 h-[2px] relative"><div class="absolute bg-cyan-400 h-full w-[90%] shadow-[0_0_10px_#00f2ff]"></div></div>
+                <div class="flex justify-between code-font text-[9px] uppercase opacity-40">
+                    <span>System Processing</span>
+                    <span>90% Optimized</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="max-w-7xl mx-auto px-8 py-20">
+        <h3 class="code-font text-center text-[10px] tracking-[1em] opacity-20 uppercase mb-16 italic">Achievements Timeline</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="p-8 border-t border-white/10 hover:border-cyan-400 transition-all group">
+                <span class="code-font text-cyan-400 text-xl font-bold">04</span>
+                <h4 class="text-lg font-bold mt-4 uppercase">Năm Đội Tuyển</h4>
+                <p class="text-sm text-gray-500 mt-2 font-light">Thành viên nòng cốt đội tuyển HSG Tin học cấp trường & khu vực.</p>
+            </div>
+            <div class="p-8 border-t border-white/10 hover:border-pink-500 transition-all group">
+                <span class="code-font text-pink-500 text-xl font-bold">03</span>
+                <h4 class="text-lg font-bold mt-4 uppercase">Năm Tin Học Trẻ</h4>
+                <p class="text-sm text-gray-500 mt-2 font-light">Tham gia Hội thi Tin học trẻ Thị xã Đông Triều, Quảng Ninh.</p>
+            </div>
+            <div class="p-8 border-t border-white/10 hover:border-purple-500 transition-all group">
+                <span class="code-font text-purple-500 text-xl font-bold">C++</span>
+                <h4 class="text-lg font-bold mt-4 uppercase">Competitive</h4>
+                <p class="text-sm text-gray-500 mt-2 font-light">Giải quyết hàng trăm bài tập trên các nền tảng lập trình thi đấu.</p>
+            </div>
+                </div>
+            </section>
+            <section id="projects" class="max-w-7xl mx-auto px-8 py-32">
+                <div class="flex items-center gap-4 mb-16 opacity-30">
+                    <div class="h-[1px] flex-grow bg-white"></div>
+                    <h2 class="code-font text-xs tracking-[1em] uppercase">Source & Slides</h2>
+                    <div class="h-[1px] flex-grow bg-white"></div>
+                </div>
+                <div class="flex flex-wrap justify-center gap-3 mb-12 code-font">
+            <button onclick="filterProjects('ALL')" id="btn-ALL" class="filter-btn active-filter">
+                [ ALL_SYSTEM ]
+            </button>
+            <button onclick="filterProjects('CODE')" id="btn-CODE" class="filter-btn">
+                <i class="fa-solid fa-code mr-2"></i>SOURCE_CODE
+            </button>
+            <button onclick="filterProjects('SLIDE')" id="btn-SLIDE" class="filter-btn">
+                <i class="fa-solid fa-file-powerpoint mr-2"></i>DOCS_SLIDE
+            </button>
+            <button onclick="filterProjects('IOT')" id="btn-IOT" class="filter-btn">
+                <i class="fa-solid fa-microchip mr-2"></i>IOT_PROJECTS
+            </button>
+        </div>
+        <div id="project-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    </section>
+    
+    <div id="admin-modal">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
+                <div>
+                    <h3 class="text-4xl font-black uppercase text-cyan-400 italic">Core Terminal</h3>
+                    <p class="code-font text-[10px] text-gray-500 mt-1">Status: Authorized Access Only</p>
+                </div>
+                <button onclick="toggleAdmin(false)" class="code-font text-xs text-red-500 border border-red-500/20 px-6 py-2 rounded-full hover:bg-red-500 hover:text-white transition">SHUTDOWN [ESC]</button>
+            </div>
+
+            <div id="auth-gate" class="max-w-md mx-auto py-20 text-center">
+                <i class="fa-solid fa-shield-halved text-5xl mb-6 text-cyan-500 opacity-50"></i>
+                <input type="password" id="sys-pass" class="input-terminal text-center text-2xl tracking-[1em]" placeholder="****">
+                <button onclick="verifyPass()" class="w-full bg-cyan-500 text-black font-black py-5 rounded-xl mt-4 uppercase text-xs tracking-widest shadow-2xl shadow-cyan-500/20 transition-all hover:scale-105">Access System</button>
+            </div>
+
+            <div id="admin-ui" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <div class="lg:col-span-4 space-y-4">
+                    <h4 class="code-font text-xs font-bold text-cyan-400 uppercase tracking-widest mb-6 border-l-4 border-cyan-400 pl-4">Create / Edit</h4>
+                    <input type="hidden" id="edit-key">
+                    <input type="text" id="p-title" class="input-terminal" placeholder="Tiêu đề dự án...">
+                    <select id="p-type" class="input-terminal">
+                        <option value="CODE">📁 SOURCE CODE (C++/WEB)</option>
+                        <option value="SLIDE">📊 SLIDE / TÀI LIỆU</option>
+                        <option value="IOT">🤖 IOT / ARDUINO</option>
+                        <option value="PROJECT">💼 ĐỒ ÁN RIÊNG</option>
+                    </select>
+                    <textarea id="p-desc" class="input-terminal h-48" placeholder="Mô tả chi tiết nội dung file..."></textarea>
+                    <input type="text" id="p-link" class="input-terminal font-bold text-cyan-500" placeholder="LINK TẢI FILE (DRIVER/GITHUB)">
+                    <button id="save-btn" onclick="saveToFirebase()" class="w-full bg-white text-black font-black py-5 rounded-xl uppercase text-xs tracking-[0.2em] hover:bg-cyan-400 transition-all">Publish Data</button>
+                    <button onclick="resetEditor()" class="w-full text-[10px] text-gray-600 uppercase mt-4 underline">Clear Form</button>
+                </div>
+
+                <div class="lg:col-span-8">
+                    <h4 class="code-font text-xs font-bold text-gray-400 uppercase tracking-widest mb-6 border-l-4 border-gray-400 pl-4">System Database</h4>
+                    <div id="cms-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[700px] overflow-y-auto pr-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix Effect
+        const canvas = document.getElementById('matrix'), ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const letters = "01010101010101", fontSize = 16, columns = canvas.width / fontSize;
+        const drops = Array.from({ length: columns }).fill(1);
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(1, 1, 1, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#00f2ff"; ctx.font = fontSize + "px monospace";
+            drops.forEach((y, i) => {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, y * fontSize);
+                if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            });
+        }
+        setInterval(drawMatrix, 50);
+
+        // Cursor
+        const dot = document.getElementById('cursor-dot'), out = document.getElementById('cursor-outline');
+        document.addEventListener('mousemove', e => {
+            dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+            out.style.left = e.clientX - 17 + 'px'; out.style.top = e.clientY - 17 + 'px';
+        });
+
+        // Firebase Config
+        const firebaseConfig = { databaseURL: "https://my-portfolio-690a9-default-rtdb.firebaseio.com/" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function toggleAdmin(s) { document.getElementById('admin-modal').style.display = s ? 'block' : 'none'; }
+        
+        function verifyPass() {
+            if(document.getElementById('sys-pass').value === "hieu2025") {
+                document.getElementById('auth-gate').classList.add('hidden');
+                document.getElementById('admin-ui').classList.remove('hidden');
+                loadCMS();
+            } else { alert("ACCESS DENIED"); }
+        }
+
+        function saveToFirebase() {
+            const key = document.getElementById('edit-key').value;
+            const payload = {
+                title: document.getElementById('p-title').value,
+                type: document.getElementById('p-type').value,
+                desc: document.getElementById('p-desc').value,
+                link: document.getElementById('p-link').value
+            };
+            if(!payload.title || !payload.link) return alert("MISSING DATA");
+            key ? db.ref('projects/' + key).set(payload) : db.ref('projects').push(payload);
+            alert("SYSTEM UPDATED"); resetEditor();
+        }
+
+        function resetEditor() {
+            document.getElementById('edit-key').value = '';
+            document.getElementById('p-title').value = '';
+            document.getElementById('p-desc').value = '';
+            document.getElementById('p-link').value = '';
+            document.getElementById('save-btn').innerText = "Publish Data";
+        }
+
+        // Realtime Data
+        db.ref('projects').on('value', snap => {
+            const list = document.getElementById('project-list'); list.innerHTML = '';
+            snap.forEach(child => {
+                const item = child.val();
+                const icon = item.type === 'CODE' ? 'fa-code' : (item.type === 'SLIDE' ? 'fa-file-powerpoint' : 'fa-cubes');
+                list.innerHTML = `
+                    <div class="glass-card p-10 flex flex-col h-full group">
+                        <div class="flex justify-between mb-8">
+                            <span class="code-font text-[10px] text-cyan-400 font-bold border border-cyan-400/20 px-4 py-1 rounded-full uppercase italic">${item.type}</span>
+                            <i class="fa-solid ${icon} opacity-20 text-2xl group-hover:opacity-100 group-hover:text-cyan-400 transition"></i>
+                        </div>
+                        <h3 class="text-2xl font-black uppercase italic mb-6 leading-tight">${item.title}</h3>
+                        <p class="text-gray-500 text-sm font-light leading-relaxed mb-10 flex-grow">${item.desc}</p>
+                        <a href="${item.link}" target="_blank" class="w-full py-5 bg-white text-black font-black text-[10px] text-center uppercase tracking-[0.3em] rounded-2xl hover:bg-cyan-500 transition-all">
+                            Tải file hệ thống
+                        </a>
+                    </div>
+                ` + list.innerHTML;
+            });
+            loadCMS();
+        });
+
+        function loadCMS() {
+            db.ref('projects').once('value', snap => {
+                const list = document.getElementById('cms-list'); list.innerHTML = '';
+                snap.forEach(child => {
+                    const d = child.val(), k = child.key;
+                    list.innerHTML += `
+                        <div class="bg-white/5 p-6 rounded-2xl flex justify-between items-center border border-white/5 hover:border-cyan-400/30 transition">
+                            <div>
+                                <div class="text-[9px] font-bold text-cyan-400 uppercase tracking-widest">${d.type}</div>
+                                <div class="font-bold text-white uppercase italic">${d.title}</div>
+                            </div>
+                            <div class="flex gap-4">
+                                <button onclick="editProject('${k}')" class="text-yellow-500 hover:scale-125 transition"><i class="fa-solid fa-pen-nib"></i></button>
+                                <button onclick="deleteProject('${k}')" class="text-red-500 hover:scale-125 transition"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function editProject(k) {
+            db.ref('projects/'+k).once('value', s => {
+                const d = s.val();
+                document.getElementById('edit-key').value = k;
+                document.getElementById('p-title').value = d.title;
+                document.getElementById('p-type').value = d.type;
+                document.getElementById('p-desc').value = d.desc;
+                document.getElementById('p-link').value = d.link;
+                document.getElementById('save-btn').innerText = "Update System Data";
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+        }
+    // Biến lưu trữ loại đang lọc (Mặc định là tất cả)
+    let currentCategory = 'ALL';
+
+    // Hàm xử lý lọc khi bấm nút
+    function filterProjects(type) {
+        currentCategory = type;
+        
+        // Cập nhật trạng thái nút bấm
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active-filter'));
+        document.getElementById('btn-' + type).classList.add('active-filter');
+        
+        // Gọi hàm render lại danh sách
+        renderData();
+    }
+
+    // Hàm render dữ liệu ra màn hình
+    function renderData() {
+        db.ref('projects').on('value', snap => {
+            const list = document.getElementById('project-list');
+            list.innerHTML = ''; // Xóa danh sách cũ
+            
+            snap.forEach(child => {
+                const item = child.val();
+                
+                // LOGIC LỌC: Chỉ hiển thị nếu loại khớp hoặc đang chọn 'ALL'
+                if (currentCategory === 'ALL' || item.type === currentCategory) {
+                    const icon = item.type === 'CODE' ? 'fa-code' : (item.type === 'SLIDE' ? 'fa-file-powerpoint' : 'fa-cubes');
+                    
+                    // Hiệu ứng Fade In cho từng item khi xuất hiện
+                    const cardHtml = `
+                        <div class="glass-card p-10 flex flex-col h-full group animate-fade-in">
+                            <div class="flex justify-between mb-8">
+                                <span class="code-font text-[10px] text-cyan-400 font-bold border border-cyan-400/20 px-4 py-1 rounded-full uppercase italic">${item.type}</span>
+                                <i class="fa-solid ${icon} opacity-20 text-2xl group-hover:opacity-100 group-hover:text-cyan-400 transition"></i>
+                            </div>
+                            <h3 class="text-2xl font-black uppercase italic mb-6 leading-tight">${item.title}</h3>
+                            <p class="text-gray-500 text-sm font-light leading-relaxed mb-10 flex-grow">${item.desc}</p>
+                            <a href="${item.link}" target="_blank" class="w-full py-5 bg-white text-black font-black text-[10px] text-center uppercase tracking-[0.3em] rounded-2xl hover:bg-cyan-500 transition-all">
+                                Tải file hệ thống
+                            </a>
+                        </div>
+                    `;
+                    list.insertAdjacentHTML('afterbegin', cardHtml);
+                }
+            });
+        });
+    }
+
+    // Gọi hàm lần đầu khi tải trang
+    renderData();
+        function deleteProject(k) { if(confirm("DELETE DATA?")) db.ref('projects/'+k).remove(); }
+    </script>
+</body>
+</html>
